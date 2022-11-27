@@ -45,7 +45,7 @@
 			<div class="m-5 text-center">
 				<h1>Survey</h1>
 			</div>
-			<form method="post" action="./userLoginController.jsp">
+			<form method="post" action="./userRegisterController.jsp">
 				<div class="input-group mb-3">
 					<input type="text" class="form-control border-dark"
 						placeholder="Email" aria-label="Email"
@@ -57,12 +57,7 @@
 						aria-describedby="basic-addon1" name="userPassword">
 				</div>
 				<div class="d-flex justify-content-center mt-5">
-					<button type="submit" class="btn-login my-1">로그인</button>
-					<!-- <button class="btn-login mx-1">회원 가입</button> -->
-				</div>
-				<div class="d-flex justify-content-center">
-					<a style="color: grey;" href="userJoin.jsp">회원가입</a>
-					<!-- <a class="btn btn-outline-success" href="#" role="button">Link</a> -->
+					<button type="submit" class="btn-login my-1">회원 가입</button>
 				</div>
 			</form>
 		</div>
