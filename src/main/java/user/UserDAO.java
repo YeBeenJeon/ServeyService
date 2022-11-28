@@ -51,20 +51,62 @@ public class UserDAO {
 	}
 	
 	public boolean getUserEmailChecked(String userEmail) {
-		String SQL = "select userEmailChecked from user where userEmail=?";
+		String SQL = "SELECT userEmailChecked FROM user WHERE userEmail=?";
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		DBConnPool dbcp = new DBConnPool();
 		
 		try {
-			
+			conn = dbcp.conn;
+			pstmt = dbcp.conn.prepareStatement(SQL);
+			pstmt.setString(1, userEmail);
+			System.out.println(pstmt.toString());
+			rs = pstmt.executeQuery(SQL);
+			if(rs.next()) {
+				return rs.getBoolean(1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(conn != null) conn.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				if(pstmt != null) pstmt.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				if(rs != null) rs.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				if(dbcp != null) dbcp.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	public String getuserEmailRandomString(String userEmail) {
+		String SQL = "select userEmailRandomString from user where userEmail=?";
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		DBConnPool dbcp = new DBConnPool();
+		
+		try {
 			conn = dbcp.conn;
 			pstmt = conn.prepareStatement(SQL);
 			pstmt.setString(1, userEmail);
 			rs = pstmt.executeQuery();
 			if(rs.next()) {
-				return rs.getBoolean(1);
+				return rs.getString(1);
 			}
 			
 		} catch (Exception e) {
@@ -94,7 +136,7 @@ public class UserDAO {
 			}
 		}
 		
-		return false;
+		return null;
 	}
 
 }

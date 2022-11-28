@@ -25,12 +25,12 @@
 		script.close();
 	}
 	else {
+		session.setAttribute("userEmail", userEmail);
 		PrintWriter script = response.getWriter();
 		script.println("<script>");
-		script.println("alert('Success')");
+		script.println("location.href='emailSendAction.jsp'");
 		script.println("</script>");
 		script.close();
-		session.setAttribute("userEmail", userEmail);
 	}
 	
 %>
