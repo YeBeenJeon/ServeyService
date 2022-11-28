@@ -18,64 +18,55 @@
 UserDAO userDAO = new UserDAO();
 String userEmail = (String) session.getAttribute("userEmail");
 
-System.out.println(userEmail);
+String notice = null;
+String url = null;
 
 if (userEmail == null) {
-	PrintWriter script = response.getWriter();
-	script.println("<script>");
-	script.println("alert('Login Please');");
-	script.println("location.href = 'userLogin.jsp;'");
-	script.println("</script>");
-	script.close();
-	return;
+	notice = "Login Please";
+	url = "userLogin.jsp";
 }
 
 boolean emailChecked = userDAO.getUserEmailChecked(userEmail);
 
 if (emailChecked == true) {
-	PrintWriter script = response.getWriter();
-	script.println("<script>");
-	script.println("alert('Already Checked!!');");
-	script.println("location.href = 'userLogin.jsp;'");
-	script.println("</script>");
-	script.close();
-	return;
-}
+	notice = "Already Checked!!";
+	url = "userLogin.jsp";
+} else {
+	String host = "http://localhost:8080/SurveyService/";
+	String from = "dpqls9789@gamil.com";
+	String to = userEmail;
+	String subject = "Survey 서비스를 위한 이메일 인증 메일입니다.";
+	String content = "다음 링크를 통해 이메일 인증을 진행하세요." + "<a href=" + host + "emailCheckAction.jsp?code="
+	+ userDAO.getuserEmailRandomString(to) + ">이메일 인증하기</a>";
 
-String host = "http://localhost:8080/SurveyService/";
-String from = "dpqls9789@gamil.com";
-String to = userEmail;
-String subject = "Survey 서비스를 위한 이메일 인증 메일입니다.";
-String content = "다음 링크를 통해 이메일 인증을 진행하세요." + "<a href=" + host + "emailCheckAction.jsp?code="
-		+ userDAO.getuserEmailRandomString(to) + ">이메일 인증하기</a>";
+	Properties p = new Properties();
+	p.put("mail.smtp.user", from);
+	p.put("mail.smtp.host", "smtp.googlemail.com");
+	p.put("mail.smtp.pot", "465");
+	p.put("mail.smtp.starttls.enable", "true");
+	p.put("mail.smtp.auth", "true");
+	p.put("mail.smtp.debug", "true");
+	p.put("mail.smtp.socketFactory.port", "465");
+	p.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+	p.put("mail.smtp.socketFactory.fallback", "false");
 
-Properties p = new Properties();
-p.put("mail.smtp.user", from);
-p.put("mail.smtp.host", "smtp.googlemail.com");
-p.put("mail.smtp.pot", "465");
-p.put("mail.smtp.starttls.enable", "true");
-p.put("mail.smtp.auth", "true");
-p.put("mail.smtp.debug", "true");
-p.put("mail.smtp.socketFactory.port", "465");
-p.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-p.put("mail.smtp.socketFactory.fallback", "false");
-
-try {
-	Authenticator auth = new Gmail();
-	Session ses = Session.getInstance(p, auth);
-	ses.setDebug(true);
-	MimeMessage msg = new MimeMessage(ses);
-	msg.setSubject(subject);
-	Address fromAddr = new InternetAddress(from);
-	msg.setFrom(fromAddr);
-	Address toAddr = new InternetAddress(to);
-	msg.addRecipient(Message.RecipientType.TO, toAddr);
-	msg.setContent(content, "text/html; charset=UTF8");
-	Transport.send(msg);
-} catch (Exception e) {
-	e.printStackTrace();
-	System.out.println("Something Wrong!! In emailSendAction.jsp");
-	return;
+	try {
+		Authenticator auth = new Gmail();
+		Session ses = Session.getInstance(p, auth);
+		ses.setDebug(true);
+		MimeMessage msg = new MimeMessage(ses);
+		msg.setSubject(subject);
+		Address fromAddr = new InternetAddress(from);
+		msg.setFrom(fromAddr);
+		Address toAddr = new InternetAddress(to);
+		msg.addRecipient(Message.RecipientType.TO, toAddr);
+		msg.setContent(content, "text/html; charset=UTF8");
+		Transport.send(msg);
+	} catch (Exception e) {
+		e.printStackTrace();
+		System.out.println("Something Wrong!! In emailSendAction.jsp");
+		return;
+	}
 }
 %>
 
@@ -96,6 +87,18 @@ try {
 </head>
 <body>
 
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+		integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+		crossorigin="anonymous"></script>
+
+	<%
+	if (emailChecked == false) {
+	%>
 	<nav class="navbar navbar-expand-lg bg-light">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#"> <img
@@ -128,14 +131,36 @@ try {
 		<p class="text-center text-muted">© 2022 YeBeen, Jeon</p>
 	</footer>
 
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
-		integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
-		crossorigin="anonymous"></script>
+	<%
+	}
+	if (emailChecked == true) {
+	%>
+
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModalLabel">Notice</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body"><%=notice%></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const myModal = new bootstrap.Modal('#exampleModal')
+		myModal.show();
+		let url = "<%=url%>";
+		setTimeout(() => location.href = url, 3000);
+	</script>
+
+	<%
+	}
+	%>
 
 </body>
 </html>
