@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import util.DBConnPool;
-import util.RandomString;
 
 public class UserDAO {
 
@@ -245,52 +244,43 @@ public class UserDAO {
 		return;
 	}
 
-	public void generateFormCode(String userEmail) {
-		String SQL = "INSERT INTO formCode (userEmail, code) VALUES (?,?)";
+	public void setSurveyInfo(String userEmail, String surveyCode) {
+		String SQL = "INSERT INTO surveyInfo (userEmail, surveyCode, lastModifyTime) VALUES (?,?, now())";
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		DBConnPool dbcp = new DBConnPool();
 
-		String code = "1234";
-		boolean err = false;
+		try {
 
-//		do {
+			conn = dbcp.conn;
+			pstmt = conn.prepareStatement(SQL);
+			pstmt.setString(1, userEmail);
+			pstmt.setString(2, surveyCode);
+			pstmt.executeUpdate();
 
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		} finally {
 			try {
-
-				conn = dbcp.conn;
-				pstmt = conn.prepareStatement(SQL);
-				pstmt.setString(1, userEmail);
-				pstmt.setString(2, code);
-				pstmt.executeUpdate();
-				err = false;
-
+				if (conn != null)
+					conn.close();
 			} catch (Exception e) {
-//				code = new RandomString().generateRandomString(15);
 				e.printStackTrace();
-//				err = true;
-
-			} finally {
-				try {
-					if (conn != null)
-						conn.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				try {
-					if (pstmt != null)
-						pstmt.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				try {
-					if (dbcp != null)
-						dbcp.close();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 			}
-//		} while (err);
+			try {
+				if (pstmt != null)
+					pstmt.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			try {
+				if (dbcp != null)
+					dbcp.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 		return;
 	}

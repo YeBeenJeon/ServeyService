@@ -27,7 +27,7 @@ if (userEmail == null) {
 
 request.setCharacterEncoding("UTF-8");
 
-String code = request.getParameter("code");
+String surveyCode = request.getParameter("surveyCode");
 
 %>
 
@@ -93,7 +93,7 @@ String code = request.getParameter("code");
 	</nav>
 	
 	<h1><%=userEmail %></h1>
-	<h1><%=code %></h1>
+	<h1><%=surveyCode %></h1>
 
 	<footer class="py-3 my-4">
 		<p class="text-center text-muted">© 2022 YeBeen, Jeon</p>

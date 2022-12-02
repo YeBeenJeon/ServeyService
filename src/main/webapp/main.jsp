@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="user.UserDAO"%>
+<%@ page import="survey.SurveyDAO"%>
+<%@ page import="survey.SurveyInfoDTO"%>
+<%@ page import="java.util.ArrayList"%>
 <%@ page import="java.io.PrintWriter"%>
 
 <%
@@ -8,8 +11,12 @@ String notice = null;
 String url = null;
 boolean isAlert = false;
 UserDAO userDAO = new UserDAO();
+SurveyDAO surveyDAO = new SurveyDAO();
+
+String cardHTML = "";
 
 String userEmail = (String) session.getAttribute("userEmail");
+ArrayList<SurveyInfoDTO> surveyInfos = new ArrayList<SurveyInfoDTO>();
 
 if (userEmail == null) {
 	notice = "Login Please!!";
@@ -23,6 +30,21 @@ if (userEmail == null) {
 		script.println("</script>");
 		script.close();
 	}
+	surveyInfos = surveyDAO.getSurveyInfo(userEmail);
+
+	for (SurveyInfoDTO surveyInfo : surveyInfos) {
+		cardHTML = cardHTML + "<div class=\"card m-3\" style=\"width: 18rem;\">"
+		+ "<img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png\" class=\"card-img-top\">"
+		+ "<div class=\"card-body\">" + "<h5 class=\"card-title\">" + surveyInfo.title + "</h5>"
+		+ "<p class=\"card-text\">" + surveyInfo.lastModifyTime + "</p>"
+		+ "<a href=\"makeSurvey.jsp?surveyCode=" + surveyInfo.surveyCode
+		+ "\" class=\"btn btn-primary\" style=\"background: #4BAAB3; border: none\">Edit</a>" + "</div>"
+		+ "</div>";
+	}
+	cardHTML = cardHTML
+	+ "<button type=\"button\" class=\"card m-3\" style=\"width: 18rem; background: #4BAAB3; color: white; height: 354.5px;\" onclick=\"clicking()\">"
+	+ "<div class=\"position-absolute top-50 start-50 translate-middle\" >" + "<h1>\\\\+/</h1>" + "<h3>New</h3>"
+	+ "</div>" + "</button>";
 }
 %>
 
@@ -40,6 +62,7 @@ if (userEmail == null) {
 	crossorigin="anonymous">
 <!-- Custom CSS insert -->
 <link rel="stylesheet" href="./css/custom.css">
+
 </head>
 <body>
 
@@ -59,7 +82,7 @@ if (userEmail == null) {
 			<div class="collapse navbar-collapse" id="navbarToggler">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 					<li class="nav-item"><a class="nav-link" aria-current="page"
-						href="#">Home</a></li>
+						href="main.jsp">Home</a></li>
 					<%
 					if (userEmail == null) {
 					%>
@@ -90,34 +113,15 @@ if (userEmail == null) {
 
 	<section class="container mt-5" style="height: 95%;">
 		<h1>My Form</h1>
-		<div class="d-flex flex-wrap">
-			<div class="card m-3" style="width: 18rem;">
-				<img
-					src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png"
-					class="card-img-top">
-				<div class="card-body">
-					<h5 class="card-title">Card title</h5>
-					<p class="card-text">최근 수정한 날짜</p>
-					<a href="#" class="btn btn-primary"
-						style="background: #4BAAB3; border: none">Edit</a>
-				</div>
-			</div>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn card m-3"
-				style="width: 18rem; background: #4BAAB3; color: white"
-				onclick="clicking()">
-				<div class="position-absolute top-50 start-50 translate-middle">
-					<h1>\+/</h1>
-					<h3>New</h3>
-				</div>
-			</button>
-			<script>
+		<div class="d-flex flex-wrap align-content-stretch" id="surveyCard"></div>
+		<script>
+		document.getElementById('surveyCard').innerHTML = '<%=cardHTML%>';
+		</script>
+		<script>
 			function clicking() {
-			  console.log("HELLO");
+				location.href="makeSurveyController.jsp";	
 			}
 			</script>
-
-		</div>
 	</section>
 
 	<footer class="py-3 my-4">
