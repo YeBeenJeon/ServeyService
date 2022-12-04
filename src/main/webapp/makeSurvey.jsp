@@ -44,9 +44,18 @@ String surveyCode = request.getParameter("surveyCode");
 	integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
 	crossorigin="anonymous">
 <!-- Custom CSS insert -->
-<link rel="stylesheet" href="./css/custom.css">
+<link rel="stylesheet" href="./css/custom.css?after">
 </head>
 <body>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+		integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+		crossorigin="anonymous"></script>
 
 	<nav class="navbar navbar-expand-lg bg-light">
 		<div class="container-fluid">
@@ -78,6 +87,8 @@ String surveyCode = request.getParameter("surveyCode");
 					%>
 				</ul>
 				<div class="d-flex pt-2">
+					<a class="nav-link mx-3" aria-current="page" href="#">Share</a> <a
+						class="nav-link me-5" aria-current="page" href="#">Response</a>
 					<p>
 						<%
 						if (userEmail != null) {
@@ -91,9 +102,91 @@ String surveyCode = request.getParameter("surveyCode");
 			</div>
 		</div>
 	</nav>
-	
-	<h1><%=userEmail %></h1>
-	<h1><%=surveyCode %></h1>
+
+	<section class="container mt-3" style="width: 55%;" id="form">
+		<div class="form-container">
+			<p>form-container</p>
+		</div>
+		<div class="form-container">
+			<div class="form-floating">
+				<textarea class="form-control mb-4" placeholder="Question"
+					aria-label="Question" id="floatingTextarea"> </textarea>
+				<label for="floatingTextarea">Question</label>
+			</div>
+			<input type="text" class="form-control" placeholder="Answer"
+				aria-label="Answer">
+			<div style="text-align: center">
+				<button type="button" class="btn btn-light delete-btn">Delete</button>
+			</div>
+		</div>
+		<div class="form-container">
+			<div class="form-floating">
+				<textarea class="form-control mb-4" placeholder="Question"
+					aria-label="Question" id="floatingTextarea"> </textarea>
+				<label for="floatingTextarea">Question</label>
+			</div>
+
+			<div class="form-check">
+
+				<input class="form-check-input" type="checkbox" value=""
+					id="flexCheckDefault1" /> <label class="form-check-label"
+					for="flexCheckDefault"> <input type="text"
+					class="form-control mb-1" placeholder="Answer"
+					aria-label="Question" />
+				</label> 
+				<br>
+					<input class="form-check-input" type="checkbox" value=""
+						id="flexCheckDefault2" /> <label class="form-check-label"
+						for="flexCheckDefault"> <input type="text" class="form-control mb-1" placeholder="Answer" aria-label="Question"/>
+					</label>
+					<button type="button" class="btn float-btn">X</button>
+				<br>
+				<input class="form-check-input" type="checkbox" value=""
+					id="flexCheckDefault2" /> <label class="form-check-label"
+					for="flexCheckDefault"> <input type="text"
+					class="form-control mb-1" placeholder="Answer"
+					aria-label="Question" />
+				</label> 
+				<br>
+				<input class="form-check-input" type="checkbox" value=""
+					id="flexCheckDefault2" disabled /> <label class="form-check-label"
+					for="flexCheckDefault" id="hello"
+					onclick="addRadioBoxElement(this.id)">Plus </label>
+			</div>
+			<div style="text-align: center">
+				<button type="button" class="btn btn-light delete-btn">Delete</button>
+			</div>
+		</div>
+	</section>
+	<section class="float-btn-container">
+		<button type="button" class="btn btn-light float-btn"
+			onclick="shortAnswerButtonClicking()">~</button>
+		<button type="button" class="btn btn-light float-btn"
+			onclick="radioBoxButtonClicking()">V</button>
+	</section>
+	<script>
+		function shortAnswerButtonClicking() {
+			var html = document.getElementById('form').innerHTML;
+			
+			html = html + "";
+			document.getElementById('form').innerHTML = html;
+		}
+		function radioBoxButtonClicking() {
+			html = document.getElementById('form').innerHTML; 
+			
+			html = html + ""
+			
+			document.getElementById('form').innerHTML = html;
+		}
+		function deleteElement(pid) {
+			console.log(pid);
+ 			document.getElementById(pid).remove();
+		}
+		function addRadioBoxElement(id) {
+			console.log(id);
+		}
+	</script>
+
 
 	<footer class="py-3 my-4">
 		<p class="text-center text-muted">© 2022 YeBeen, Jeon</p>
@@ -113,15 +206,6 @@ String surveyCode = request.getParameter("surveyCode");
 			</div>
 		</div>
 	</div>
-
-	<script
-		src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-		integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-		crossorigin="anonymous"></script>
-	<script
-		src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
-		integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
-		crossorigin="anonymous"></script>
 
 	<script>
 		if(<%=isAlert%> == true) {
