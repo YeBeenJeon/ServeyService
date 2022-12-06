@@ -61,7 +61,6 @@
 				</div>
 				<div class="d-flex justify-content-center">
 					<a style="color: grey;" href="userJoin.jsp">회원가입</a>
-					<!-- <a class="btn btn-outline-success" href="#" role="button">Link</a> -->
 				</div>
 			</form>
 		</div>

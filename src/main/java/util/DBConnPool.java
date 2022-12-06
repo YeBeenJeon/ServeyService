@@ -30,7 +30,7 @@ public class DBConnPool {
 			
 			conn = source.getConnection();
 			
-			System.out.println("DB Connection Pool Complete!!!");
+//			System.out.println("DB Connection Pool Complete!!!");
 			
 		} catch (Exception e){
 			e.printStackTrace();

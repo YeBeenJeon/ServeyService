@@ -1,11 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="user.UserDAO"%>
-<%@ page import="survey.SurveyDAO"%>
-<%@ page import="java.util.ArrayList"%>
 <%@ page import="java.io.PrintWriter"%>
-<%@ page import="survey.SurveyFormElementDTO"%>
-<%@ page import="survey.SurveyRadioElementsDTO"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="survey.SurveyDAO"%>
 
 <%
 String notice = null;
@@ -33,18 +31,11 @@ request.setCharacterEncoding("UTF-8");
 
 String surveyCode = request.getParameter("surveyCode");
 
+ArrayList<String> emailList = new SurveyDAO().getResponseList(surveyCode);
+
 String shareURL = "localhost:8080/SurveyService/formView.jsp?surveyCode=" + surveyCode;
 String responseURL = "responseList.jsp?surveyCode=" + surveyCode;
-
-SurveyDAO surveyDAO = new SurveyDAO();
-
-String title = surveyDAO.getFormTitle(surveyCode);
-if (title == null)
-	title = "Title";
-
-ArrayList<SurveyFormElementDTO> surveyForms = new ArrayList<SurveyFormElementDTO>();
-
-surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
+String responseViewURL = "responseView.jsp?surveyCode=" + surveyCode;
 %>
 
 <!DOCTYPE html>
@@ -52,7 +43,7 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>makeSurvey.jsp</title>
+<title>responseView.jsp</title>
 <!-- bootstrap css insert -->
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
@@ -123,25 +114,23 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 	</nav>
 
 	<section class="container mt-3" style="width: 55%;">
-		<form method="POST" action="formController.jsp?code=<%=surveyCode%>">
-			<div id="form">
-				<div class="form-container">
-					<input type="text" class="form-control mb-1"
-						placeholder="<%=title%>" name="title" />
-				</div>
 
-			</div>
-			<div class="d-flex justify-content-center mt-5">
-				<button type="submit" class="btn-login my-1">저장</button>
-			</div>
-		</form>
+		<div class="form-container" style="text-align: center;">
+			<h3>Response List</h3>
+			<br>
+			<%
+			for (String email : emailList) {
+			%>
+			<button type="button" class="btn btn-outline-secondary m-2"
+				onclick="emailClick('<%=email%>')"><%=email%></button>
+			<br>
+			<%
+			}
+			%>
+		</div>
+
 	</section>
-	<section class="float-btn-container">
-		<button type="button" class="btn btn-light float-btn"
-			onclick="shortAnswerButtonClicking()">~</button>
-		<button type="button" class="btn btn-light float-btn"
-			onclick="radioBoxButtonClicking()">V</button>
-	</section>
+
 
 	<footer class="py-3 my-4">
 		<p class="text-center text-muted">© 2022 YeBeen, Jeon</p>
@@ -188,8 +177,11 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 			let url = "<%=url%>";
 			setTimeout(() => location.href = url, 2000);
 		}
-	
-</script>
+		function emailClick(email) {
+			var url = "<%=responseViewURL%>" + "&email=" + email;
+			location.href= url;
+		}
+	</script>
 </body>
 
 </html>

@@ -6,12 +6,13 @@
 <%
 request.setCharacterEncoding("UTF-8");
 
+String userEmail = (String) session.getAttribute("userEmail");
 String surveyCode = request.getParameter("code");
 
 Map<String, String[]> params = request.getParameterMap();
 Set<String> keySet = params.keySet();
 
-String[] elementInfo = null;
+String[] answerInfo = null;
 
 String location = null;
 String formType = null;
@@ -20,40 +21,32 @@ String value = null;
 
 SurveyDAO surveyDAO = new SurveyDAO();
 
-surveyDAO.clearSurvey(surveyCode);
+surveyDAO.clearSurveyAnswer(userEmail, surveyCode);
 
 for (String key : keySet) {
 	if (key.equals("code"))
 		continue;
-	System.out.println(key + " -> " + params.get(key)[0]);
-	elementInfo = key.split("-");
 
-	if (elementInfo.length == 1) {
-		surveyDAO.setFormTitle(surveyCode, params.get(key)[0]);
-	} else if (elementInfo.length == 3) {
-		location = elementInfo[0];
-		formType = elementInfo[1];
-		value = params.get(key)[0];
-		surveyDAO.insertQuestion(surveyCode, location, formType, value);
-	} else if (elementInfo.length == 4) {
-		location = elementInfo[0];
-		formType = elementInfo[1];
-		elementNum = elementInfo[3];
-		value = params.get(key)[0];
-		surveyDAO.insertElement(surveyCode, location, formType, elementNum, value);
-	}
+	System.out.println(key + " -> " + params.get(key)[0]);
+	answerInfo = key.split("-");
+
+	location = answerInfo[0];
+	formType = answerInfo[1];
+	elementNum = answerInfo[2];
+	value = params.get(key)[0];
+
+	surveyDAO.insertAnswer(userEmail, surveyCode, location, formType, elementNum, value);
 
 }
 
 String notice = null;
-String shareURL = "localhost:8080/SurveyService/formView.jsp?surveyCode=" + surveyCode;
 %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>userLogin</title>
+<title>formViewController</title>
 <!-- bootstrap css insert -->
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
@@ -71,16 +64,14 @@ String shareURL = "localhost:8080/SurveyService/formView.jsp?surveyCode=" + surv
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h1 class="modal-title fs-5" id="exampleModalLabel">저장 성공~</h1>
+					<h1 class="modal-title fs-5" id="exampleModalLabel">제출 성공</h1>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"
 						aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<h4>공유 주소</h4>
-					<p><%=shareURL%>
-					<p>
 					<div class="d-flex justify-content-center mt-2">
-						<button type="button" class="btn-login my-1" onclick="location.href='main.jsp'">Go Main</button>
+						<button type="button" class="btn-login my-1"
+							onclick="location.href='main.jsp'">Go Main</button>
 					</div>
 				</div>
 			</div>

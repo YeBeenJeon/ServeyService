@@ -1,13 +1,22 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ page import="user.UserDAO"%>
-<%@ page import="survey.SurveyDAO"%>
+
 <%@ page import="java.util.ArrayList"%>
-<%@ page import="java.io.PrintWriter"%>
+<%@ page import="survey.SurveyDAO"%>
 <%@ page import="survey.SurveyFormElementDTO"%>
 <%@ page import="survey.SurveyRadioElementsDTO"%>
+<%@ page import="user.UserDAO"%>
+<%@ page import="java.io.PrintWriter"%>
 
 <%
+request.setCharacterEncoding("UTF-8");
+
+String surveyCode = request.getParameter("surveyCode");
+String email = request.getParameter("email");
+
+String title = new SurveyDAO().getFormTitle(surveyCode);
+
+// For Alert
 String notice = null;
 String url = null;
 boolean isAlert = false;
@@ -29,30 +38,23 @@ if (userEmail == null) {
 	}
 }
 
-request.setCharacterEncoding("UTF-8");
-
-String surveyCode = request.getParameter("surveyCode");
-
 String shareURL = "localhost:8080/SurveyService/formView.jsp?surveyCode=" + surveyCode;
-String responseURL = "responseList.jsp?surveyCode=" + surveyCode;
 
+// Get Form Element
 SurveyDAO surveyDAO = new SurveyDAO();
-
-String title = surveyDAO.getFormTitle(surveyCode);
-if (title == null)
-	title = "Title";
 
 ArrayList<SurveyFormElementDTO> surveyForms = new ArrayList<SurveyFormElementDTO>();
 
 surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
-%>
 
+//System.out.println(surveyForms.toString());
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>makeSurvey.jsp</title>
+<title>formView.jsp</title>
 <!-- bootstrap css insert -->
 <link
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
@@ -90,7 +92,7 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 			<div class="collapse navbar-collapse" id="navbarToggler">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 					<li class="nav-item"><a class="nav-link" aria-current="page"
-						href="#">Home</a></li>
+						href="main.jsp">Home</a></li>
 					<%
 					if (userEmail == null) {
 					%>
@@ -105,9 +107,7 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 				</ul>
 				<div class="d-flex pt-2">
 					<a class="nav-link btn btn-link mx-3" aria-current="page"
-						onclick="clickShare()">Share</a> <a
-						class="nav-link btn btn-link me-5" aria-current="page"
-						href="<%=responseURL%>">Response</a>
+						onclick="clickShare()">Share</a>
 					<p>
 						<%
 						if (userEmail != null) {
@@ -123,24 +123,31 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 	</nav>
 
 	<section class="container mt-3" style="width: 55%;">
-		<form method="POST" action="formController.jsp?code=<%=surveyCode%>">
+		<form method="POST"
+			action="formViewController.jsp?code=<%=surveyCode%>">
 			<div id="form">
 				<div class="form-container">
-					<input type="text" class="form-control mb-1"
-						placeholder="<%=title%>" name="title" />
+					<h2><%=title%></h2>
+					<h6>
+						Email:
+						<%=email%></h6>
 				</div>
-
-			</div>
-			<div class="d-flex justify-content-center mt-5">
-				<button type="submit" class="btn-login my-1">저장</button>
+				<%
+				for (SurveyFormElementDTO surveyForm : surveyForms) {
+					request.setAttribute("surveyForm", surveyForm);
+					if (surveyForm.getFormType().equals("short")) {
+				%>
+				<jsp:include page="shortFormWithAnswer.jsp"></jsp:include>
+				<%
+				} else {
+				%>
+				<jsp:include page="radioFormWithAnswer.jsp"></jsp:include>
+				<%
+				}
+				}
+				%>
 			</div>
 		</form>
-	</section>
-	<section class="float-btn-container">
-		<button type="button" class="btn btn-light float-btn"
-			onclick="shortAnswerButtonClicking()">~</button>
-		<button type="button" class="btn btn-light float-btn"
-			onclick="radioBoxButtonClicking()">V</button>
 	</section>
 
 	<footer class="py-3 my-4">
@@ -187,9 +194,7 @@ surveyForms = surveyDAO.getSurveyFormElement(surveyCode);
 			exModal.show();
 			let url = "<%=url%>";
 			setTimeout(() => location.href = url, 2000);
-		}
-	
-</script>
+		}	
+	</script>
 </body>
-
 </html>

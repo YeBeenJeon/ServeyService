@@ -38,7 +38,12 @@ if (userEmail == null) {
 		+ "<div class=\"card-body\">" + "<h5 class=\"card-title\">" + surveyInfo.title + "</h5>"
 		+ "<p class=\"card-text\">" + surveyInfo.lastModifyTime + "</p>"
 		+ "<a href=\"makeSurvey.jsp?surveyCode=" + surveyInfo.surveyCode
-		+ "\" class=\"btn btn-primary\" style=\"background: #4BAAB3; border: none\">Edit</a>" + "</div>"
+		+ "\" class=\"btn btn-primary\" style=\"background: #4BAAB3; border: none\">Edit</a>"
+		+ "<a href=\"responseList.jsp?surveyCode=" + surveyInfo.surveyCode
+		+ "\" class=\"btn btn-primary mx-2\" style=\"background: #4BAAB3; border: none\">Response</a>"
+		+ "<a href=\"deleteForm.jsp?surveyCode=" + surveyInfo.surveyCode
+		+ "\" class=\"btn btn-primary \" style=\"background: #4BAAB3; border: none\">Delete</a>"
+		+ "</div>"
 		+ "</div>";
 	}
 	cardHTML = cardHTML
@@ -90,7 +95,7 @@ if (userEmail == null) {
 					<%
 					} else {
 					%>
-					<li class="nav-item"><a class="nav-link" href="userLogin.jsp">Logout</a></li>
+					<li class="nav-item"><a class="nav-link" href="userLogout.jsp">Logout</a></li>
 					<%
 					}
 					%>
