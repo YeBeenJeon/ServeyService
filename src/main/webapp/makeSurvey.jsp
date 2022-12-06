@@ -29,6 +29,7 @@ request.setCharacterEncoding("UTF-8");
 
 String surveyCode = request.getParameter("surveyCode");
 
+String shareURL = "localhost:8080/SurveyService/formView.jsp?surveyCode=" + surveyCode;
 %>
 
 <!DOCTYPE html>
@@ -56,6 +57,7 @@ String surveyCode = request.getParameter("surveyCode");
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
 		integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
 		crossorigin="anonymous"></script>
+	<script src="./js/makeSurvey.js?after"></script>
 
 	<nav class="navbar navbar-expand-lg bg-light">
 		<div class="container-fluid">
@@ -87,8 +89,9 @@ String surveyCode = request.getParameter("surveyCode");
 					%>
 				</ul>
 				<div class="d-flex pt-2">
-					<a class="nav-link mx-3" aria-current="page" href="#">Share</a> <a
-						class="nav-link me-5" aria-current="page" href="#">Response</a>
+					<button class="nav-link btn btn-link mx-3" aria-current="page"
+						onclick="clickShare()">Share</button>
+					<button class="nav-link btn btn-link me-5" aria-current="page">Response</button>
 					<p>
 						<%
 						if (userEmail != null) {
@@ -103,60 +106,19 @@ String surveyCode = request.getParameter("surveyCode");
 		</div>
 	</nav>
 
-	<section class="container mt-3" style="width: 55%;" id="form">
-		<div class="form-container">
-			<p>form-container</p>
-		</div>
-		<div class="form-container">
-			<div class="form-floating">
-				<textarea class="form-control mb-4" placeholder="Question"
-					aria-label="Question" id="floatingTextarea"> </textarea>
-				<label for="floatingTextarea">Question</label>
-			</div>
-			<input type="text" class="form-control" placeholder="Answer"
-				aria-label="Answer">
-			<div style="text-align: center">
-				<button type="button" class="btn btn-light delete-btn">Delete</button>
-			</div>
-		</div>
-		<div class="form-container">
-			<div class="form-floating">
-				<textarea class="form-control mb-4" placeholder="Question"
-					aria-label="Question" id="floatingTextarea"> </textarea>
-				<label for="floatingTextarea">Question</label>
-			</div>
+	<section class="container mt-3" style="width: 55%;">
+		<form method="POST" action="formController.jsp?code=<%=surveyCode%>">
+			<div id="form">
+				<div class="form-container">
+					<input type="text" class="form-control mb-1" placeholder="Title"
+						name="title" />
+				</div>
 
-			<div class="form-check">
-
-				<input class="form-check-input" type="checkbox" value=""
-					id="flexCheckDefault1" /> <label class="form-check-label"
-					for="flexCheckDefault"> <input type="text"
-					class="form-control mb-1" placeholder="Answer"
-					aria-label="Question" />
-				</label> 
-				<br>
-					<input class="form-check-input" type="checkbox" value=""
-						id="flexCheckDefault2" /> <label class="form-check-label"
-						for="flexCheckDefault"> <input type="text" class="form-control mb-1" placeholder="Answer" aria-label="Question"/>
-					</label>
-					<button type="button" class="btn float-btn">X</button>
-				<br>
-				<input class="form-check-input" type="checkbox" value=""
-					id="flexCheckDefault2" /> <label class="form-check-label"
-					for="flexCheckDefault"> <input type="text"
-					class="form-control mb-1" placeholder="Answer"
-					aria-label="Question" />
-				</label> 
-				<br>
-				<input class="form-check-input" type="checkbox" value=""
-					id="flexCheckDefault2" disabled /> <label class="form-check-label"
-					for="flexCheckDefault" id="hello"
-					onclick="addRadioBoxElement(this.id)">Plus </label>
 			</div>
-			<div style="text-align: center">
-				<button type="button" class="btn btn-light delete-btn">Delete</button>
+			<div class="d-flex justify-content-center mt-5">
+				<button type="submit" class="btn-login my-1">저장</button>
 			</div>
-		</div>
+		</form>
 	</section>
 	<section class="float-btn-container">
 		<button type="button" class="btn btn-light float-btn"
@@ -164,35 +126,12 @@ String surveyCode = request.getParameter("surveyCode");
 		<button type="button" class="btn btn-light float-btn"
 			onclick="radioBoxButtonClicking()">V</button>
 	</section>
-	<script>
-		function shortAnswerButtonClicking() {
-			var html = document.getElementById('form').innerHTML;
-			
-			html = html + "";
-			document.getElementById('form').innerHTML = html;
-		}
-		function radioBoxButtonClicking() {
-			html = document.getElementById('form').innerHTML; 
-			
-			html = html + ""
-			
-			document.getElementById('form').innerHTML = html;
-		}
-		function deleteElement(pid) {
-			console.log(pid);
- 			document.getElementById(pid).remove();
-		}
-		function addRadioBoxElement(id) {
-			console.log(id);
-		}
-	</script>
-
 
 	<footer class="py-3 my-4">
 		<p class="text-center text-muted">© 2022 YeBeen, Jeon</p>
 	</footer>
 
-	<!-- Modal -->
+	<!-- Alert Modal -->
 	<div class="modal fade" id="exampleModal" tabindex="-1"
 		aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -207,14 +146,32 @@ String surveyCode = request.getParameter("surveyCode");
 		</div>
 	</div>
 
+	<!-- Share Modal -->
+	<div class="modal fade" id="shareModal" tabindex="-1"
+		aria-labelledby="shareModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="shareModalLabel">Share</h1>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<h4>공유 주소</h4>
+					<p><%=shareURL%>
+					<p>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script>
 		if(<%=isAlert%> == true) {
-			const myModal = new bootstrap.Modal('#exampleModal')
-			myModal.show();
+			const exModal = new bootstrap.Modal('#exampleModal')
+			exModal.show();
 			let url = "<%=url%>";
 			setTimeout(() => location.href = url, 2000);
 		}
 	</script>
-
 </body>
 </html>

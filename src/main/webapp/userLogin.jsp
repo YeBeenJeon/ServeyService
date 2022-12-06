@@ -58,7 +58,6 @@
 				</div>
 				<div class="d-flex justify-content-center mt-5">
 					<button type="submit" class="btn-login my-1">로그인</button>
-					<!-- <button class="btn-login mx-1">회원 가입</button> -->
 				</div>
 				<div class="d-flex justify-content-center">
 					<a style="color: grey;" href="userJoin.jsp">회원가입</a>
